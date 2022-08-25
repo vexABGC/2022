@@ -1,4 +1,6 @@
 #include "main.h"
+#include "pros/misc.h"
+#define PNEUMATICS 'A'
 
 /**
  * A callback function for LLEMU's center button.
@@ -74,7 +76,10 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+
 	pros::Controller master(pros::E_CONTROLLER_MASTER); // Controller setup
+
+	pros::ADIAnalogOut pneumatics (PNEUMATICS);	// PNEUMATICS setup
 
 	// Quad motor setup
 	pros::Motor left_mtr(1,2);
@@ -85,11 +90,15 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		
-		// Tank controls
+		// Read controller
 		int left = master.get_analog(ANALOG_LEFT_Y);
 		int right = master.get_analog(ANALOG_RIGHT_Y);
+		bool buttonA = master.get_digital(DIGITAL_A);
+
+		// Output to motors and pneumatics
 		left_mtr = left;
 		right_mtr = right;
+		pneumatics.set_value(buttonA);
 
 		pros::delay(20); // This is required for the screen to function
 	}
