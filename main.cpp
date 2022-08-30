@@ -80,6 +80,7 @@ void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER); // Controller setup
 
 	pros::ADIAnalogOut pneumatics (PNEUMATICS);	// PNEUMATICS setup
+	bool PneumaticsState = false;
 
 	// Quad motor setup
 	pros::Motor left_mtr(1,2);
@@ -95,10 +96,16 @@ void opcontrol() {
 		int right = master.get_analog(ANALOG_RIGHT_Y);
 		bool buttonA = master.get_digital(DIGITAL_A);
 
+		// PNEUMATICS function
+		if (buttonA == true) {
+			pneumatics.set_value(true);
+			pros::delay(100);
+			pneumatics.set_value(false);
+		}
+
 		// Output to motors and pneumatics
 		left_mtr = left;
 		right_mtr = right;
-		pneumatics.set_value(buttonA);
 
 		pros::delay(20); // This is required for the screen to function
 	}
