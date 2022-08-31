@@ -83,8 +83,10 @@ void opcontrol() {
 	bool PneumaticsState = false;
 
 	// Quad motor setup
-	pros::Motor left_mtr(1,2);
-	pros::Motor right_mtr(3, 4);
+	pros::Motor left_mtr1(1);
+	pros::Motor left_mtr2(2);
+	pros::Motor right_mtr1(3);
+	pros::Motor right_mtr2(4);
 
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
@@ -103,9 +105,11 @@ void opcontrol() {
 			pneumatics.set_value(false);
 		}
 
-		// Output to motors and pneumatics
-		left_mtr = left;
-		right_mtr = right;
+		// Output to motors
+		left_mtr1 = left;
+		left_mtr2 = left;
+		right_mtr1 = right;
+		right_mtr2 = right;
 
 		pros::delay(20); // This is required for the screen to function
 	}
