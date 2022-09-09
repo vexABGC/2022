@@ -1,8 +1,8 @@
-# Team DLOW
-A moment of silence for the deceased
+# Anti Bevel Gear Contingent
+A moment of silence for the deceased...
 
 ## PROS
-Instead of using Vexcode, we are using [PROS](https://pros.cs.purdue.edu/). This is for compatibility with Linux mostly and also it has some other benefits compared to using vex while being competition legal. 
+Instead of using Vexcode, we are using [PROS](https://pros.cs.purdue.edu/). This is for compatibility with Linux mostly and also it has some other benefits compared to using vexcode while being competition legal. 
 
 ## Code guidelines
 1. All code will be written in PROS
