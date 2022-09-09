@@ -19,7 +19,7 @@ Instead of using Vexcode, we are using [PROS](https://pros.cs.purdue.edu/). This
 2. `git`, `python3`, `pros-cli` (from pip), `arm-none-eabi-g++`, and if you get errors try installing `arm-none-eabi-newlib`
 3. Use pros to make a new project with `pros conductor new-project <location>`
 4. CD into `src/` inside the new project and delete anything inside
-5. Use `git clone https://github.com/Team-DLOW/2022` to download the code and log in to git on your computer
+5. Use `git clone https://github.com/Team-DLOW/2022 .` to download the code and log in to git on your computer
 6. There is no step 6, you are now ready to edit and collaborate on code correctly!
 
 ### Using VSCODE
