@@ -9,12 +9,11 @@
  * "I was pressed!" and nothing.
  */
 void on_center_button() {
+	
 	static bool pressed = false;
 	pressed = !pressed;
 	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
 	} else {
-		pros::lcd::clear_line(2);
 	}
 }
 
@@ -84,9 +83,8 @@ void opcontrol() {
 
 	// Quad motor setup
 	pros::Motor left_mtr1(1);
-	pros::Motor left_mtr2(2);
-	pros::Motor right_mtr1(3);
-	pros::Motor right_mtr2(4);
+	pros::Motor right_mtr1(10);
+
 
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
@@ -96,20 +94,13 @@ void opcontrol() {
 		// Read controller
 		int left = master.get_analog(ANALOG_LEFT_Y);
 		int right = master.get_analog(ANALOG_RIGHT_Y);
-		bool buttonA = master.get_digital(DIGITAL_A);
+		// bool buttonA = master.get_digital(DIGITAL_A);
 
-		// PNEUMATICS function
-		if (buttonA == true) {
-			pneumatics.set_value(true);
-			pros::delay(100);
-			pneumatics.set_value(false);
-		}
 
 		// Output to motors
 		left_mtr1 = left;
-		left_mtr2 = left;
 		right_mtr1 = right;
-		right_mtr2 = right;
+
 
 		pros::delay(20); // This is required for the screen to function
 	}
