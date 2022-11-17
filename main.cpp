@@ -99,7 +99,7 @@ void opcontrol() {
 
 		// Output to motors
 		left_mtr1 = left;
-		right_mtr1 = right;
+		right_mtr1 = - right;
 
 
 		pros::delay(20); // This is required for the screen to function
