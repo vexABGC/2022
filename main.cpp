@@ -1,8 +1,10 @@
 // --- Global variables ---
 	int LEFT_MOTOR_1_PORT = 1; 		// Left motor 1 port
 	int RIGHT_MOTOR_1_PORT = 10; 	// Right motor 1 port
+	int BAND_WHEEL_PORT = 12;		// Rubber band wheel port
 	// #define PNEUMATICS 'A' 		// PNEUMATICS port
-	int count = 0;					// Helps screen work
+	int count = 0;					// Helps controller screen work
+	// bool PneumaticsState = false;// Defaults the PneumaticsState to off, as it is off when the code first runs
 
 // PROS libraries
 	#include "main.h"
@@ -89,11 +91,12 @@ void opcontrol() {
 		pros::Controller master(pros::E_CONTROLLER_MASTER); // Controller setup
 
 		// pros::ADIAnalogOut pneumatics (PNEUMATICS);	// PNEUMATICS setup
-		// bool PneumaticsState = false;
 
-		// Quad motor setup
-		pros::Motor left_mtr1(LEFT_MOTOR_1_PORT);
-		pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT);
+		// --- Motor setup ---
+		pros::Motor left_mtr1(LEFT_MOTOR_1_PORT); 	// Left side motor
+		pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT); 	// Right side motor
+		pros::Motor wheel_mtr(BAND_WHEEL_PORT);		// Wheel motor
+
 
 
 	while (true) { // Infinite loop while the opcontrol is running to refresh controller input and output it to the motors
@@ -108,11 +111,13 @@ void opcontrol() {
 		// Read controller
 			int left = master.get_analog(ANALOG_LEFT_Y);
 			int right = master.get_analog(ANALOG_RIGHT_Y);
-			// bool buttonA = master.get_digital(DIGITAL_A);
+			bool buttonA = master.get_digital(DIGITAL_A);
 
 		// Output to motors
 			left_mtr1 = left;
 			right_mtr1 = - right;
+			wheel_mtr = buttonA;
+
 
 		pros::delay(20); // This is required for the screen to function
 	}
