@@ -1,14 +1,15 @@
-#include "main.h"
-#include "pros/misc.h"
-// #define PNEUMATICS 'A'
+// --- Global variables ---
+	int LEFT_MOTOR_1_PORT = 1; 		// Left motor 1 port
+	int RIGHT_MOTOR_1_PORT = 10; 	// Right motor 1 port
+	// #define PNEUMATICS 'A' 		// PNEUMATICS port
+	int count = 0;					// Helps screen work
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
+// PROS libraries
+	#include "main.h"
+	#include "pros/misc.h"
+
+
+void on_center_button() { // Runs when the center button of the brain's touch screen is pressed
 	
 	static bool pressed = false;
 	pressed = !pressed;
@@ -61,16 +62,14 @@ void competition_initialize() {}
  */
 void autonomous() {
 	// Motor setup
-	pros::Motor left_mtr1(1);
-	pros::Motor right_mtr1(10);
+	pros::Motor left_mtr1(LEFT_MOTOR_1_PORT);
+	pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT);
 
-	
 	
 	left_mtr1.move_relative(1000, 100);
 	right_mtr1.move_relative(1000, 100);
 	
 }
-
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -86,31 +85,34 @@ void autonomous() {
  */
 void opcontrol() {
 
-	pros::Controller master(pros::E_CONTROLLER_MASTER); // Controller setup
+	// --- Controller and motor setup ---
+		pros::Controller master(pros::E_CONTROLLER_MASTER); // Controller setup
 
-	// pros::ADIAnalogOut pneumatics (PNEUMATICS);	// PNEUMATICS setup
-	// bool PneumaticsState = false;
+		// pros::ADIAnalogOut pneumatics (PNEUMATICS);	// PNEUMATICS setup
+		// bool PneumaticsState = false;
 
-	// Quad motor setup
-	pros::Motor left_mtr1(1);
-	pros::Motor right_mtr1(10);
+		// Quad motor setup
+		pros::Motor left_mtr1(LEFT_MOTOR_1_PORT);
+		pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT);
 
 
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		
+	while (true) { // Infinite loop while the opcontrol is running to refresh controller input and output it to the motors
+
+		if (!(count % 4)) { // Run every 4th time the 20ms delay loop is ran
+			// Only print every 60ms, the controller text update rate is slow
+			master.set_text(0, 0, "DLOW Beatboxing Best"); // useless
+			}
+			count++;
+
+
 		// Read controller
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
-		// bool buttonA = master.get_digital(DIGITAL_A);
-
+			int left = master.get_analog(ANALOG_LEFT_Y);
+			int right = master.get_analog(ANALOG_RIGHT_Y);
+			// bool buttonA = master.get_digital(DIGITAL_A);
 
 		// Output to motors
-		left_mtr1 = left;
-		right_mtr1 = - right;
-
+			left_mtr1 = left;
+			right_mtr1 = - right;
 
 		pros::delay(20); // This is required for the screen to function
 	}
