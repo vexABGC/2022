@@ -1,6 +1,6 @@
 #include "main.h"
 #include "pros/misc.h"
-#define PNEUMATICS 'A'
+// #define PNEUMATICS 'A'
 
 /**
  * A callback function for LLEMU's center button.
@@ -59,7 +59,17 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	// Motor setup
+	pros::Motor left_mtr1(1);
+	pros::Motor right_mtr1(10);
+
+	
+	
+	left_mtr1.move_relative(1000, 100);
+	right_mtr1.move_relative(1000, 100);
+	
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -78,8 +88,8 @@ void opcontrol() {
 
 	pros::Controller master(pros::E_CONTROLLER_MASTER); // Controller setup
 
-	pros::ADIAnalogOut pneumatics (PNEUMATICS);	// PNEUMATICS setup
-	bool PneumaticsState = false;
+	// pros::ADIAnalogOut pneumatics (PNEUMATICS);	// PNEUMATICS setup
+	// bool PneumaticsState = false;
 
 	// Quad motor setup
 	pros::Motor left_mtr1(1);
