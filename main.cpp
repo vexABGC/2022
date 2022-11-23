@@ -12,12 +12,6 @@
 
 
 void on_center_button() { // Runs when the center button of the brain's touch screen is pressed
-	
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-	} else {
-	}
 }
 
 /**
@@ -27,6 +21,7 @@ void on_center_button() { // Runs when the center button of the brain's touch sc
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "A moment of silence for the deceased...");
 
@@ -67,9 +62,9 @@ void autonomous() {
 	pros::Motor left_mtr1(LEFT_MOTOR_1_PORT);
 	pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT);
 
-	
-	left_mtr1.move_relative(1000, 100);
-	right_mtr1.move_relative(1000, 100);
+	left_mtr1 = 100; right_mtr1 = -100;
+	pros::delay(1000);
+	left_mtr1 = 0; right_mtr1 = 0;
 	
 }
 /**
@@ -98,12 +93,14 @@ void opcontrol() {
 		pros::Motor wheel_mtr(BAND_WHEEL_PORT);		// Wheel motor
 
 
+		master.set_text(0, 0, "DLOW Best"); // useless
+
+
 
 	while (true) { // Infinite loop while the opcontrol is running to refresh controller input and output it to the motors
 
-		if (!(count % 4)) { // Run every 4th time the 20ms delay loop is ran
+		if (!(count % 10)) { // Run every 4th time the 20ms delay loop is ran
 			// Only print every 60ms, the controller text update rate is slow
-			master.set_text(0, 0, "DLOW Beatboxing Best"); // useless
 			}
 			count++;
 
@@ -112,6 +109,16 @@ void opcontrol() {
 			int left = master.get_analog(ANALOG_LEFT_Y);
 			int right = master.get_analog(ANALOG_RIGHT_Y);
 			bool buttonA = master.get_digital(DIGITAL_A);
+			bool buttonX = master.get_digital(DIGITAL_X);
+
+		if (buttonX) {
+
+
+
+		}
+
+		
+
 
 		// Output to motors
 			left_mtr1 = left;
