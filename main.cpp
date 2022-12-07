@@ -95,7 +95,7 @@ void opcontrol() {
 	// --- Controller, pneumatics and motor setup ---
 		pros::Controller master(pros::E_CONTROLLER_MASTER); // Controller setup
 
-		pros::ADIAnalogOut pneumaticsA (PNEUMATICS_A);	// PNEUMATICS setup
+		pros::ADIDigitalOut pneumaticsA (PNEUMATICS_A);	// PNEUMATICS setup
 		
 		// --- Motor setup ---
 			// Edit the ports using the global variables, please
@@ -130,7 +130,15 @@ void opcontrol() {
 			left_mtr1 = left_stickY; 					// Left and right side motors move by the sticks of their respective sides (tank controls)
 			right_mtr1 = - right_stickY;				// This motor is reversed
 			wheel_mtr = buttonA;						// The band wheel moves on button A
-			Flywheel1 = bumperR1; Flywheel2 = bumperR1; // Both flywheels activate on R1
+
+			if (bumperR1) {
+				Flywheel1 = -255;
+				Flywheel2 = -255;
+			}
+			else{
+				Flywheel1 = 0;
+				Flywheel2 = 0;
+			}
 			BeltMotor = bumperL2 - bumperL1;			// Belt goes up when L2, down with L1
 
 
