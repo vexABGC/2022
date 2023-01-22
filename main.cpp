@@ -1,17 +1,19 @@
 // --- Global variables ---
 	// Ports
 		#include <string>
-		int LEFT_MOTOR_1_PORT = 10; 		// Left motor 1 port
-		int RIGHT_MOTOR_1_PORT = 1; 	// Right motor 1 port
-		int BAND_WHEEL_PORT = 20;		// Rubber band wheel port
-		int FLYWHEEL_PORT_1 = 6;		// Flywheel 1 port
-		int FLYWHEEL_PORT_2 = 7;		// Flywheel 2 port
-		int BELT_MOTOR_PORT = 20;		// Motor for the belt intake
+		int LEFT_MOTOR_1_PORT = 11; 		// Left motor 1 port
+		int LEFT_MOTOR_2_PORT = 12; 		// Left motor 2 port
+		int RIGHT_MOTOR_1_PORT = 19; 	// Right motor 1 port
+		int RIGHT_MOTOR_2_PORT = 20; 	// Right motor 1 port
+		int STRINGDROP_PORT = 7;		// Rubber band wheel port
+		int FLYWHEEL_PORT_1 = 1;		// Flywheel 1 port
+		int FLYWHEEL_PORT_2 = 10;		// Flywheel 2 port
+		int BELT_MOTOR_PORT = 5;		// Motor for the belt intake
 		#define PNEUMATICS_A 'A' 		// PNEUMATICS port A
 		#define PNEUMATICS_B 'B' 		// PNEUMATICS port A
 	// Other
 		int PNEUMATICS_DELAY = 200;
-		int ROLLER_SPEED = 50;
+		float STRINGDROP_MULTIPLIER = 0.2;
 
 // PROS libraries
 	#include "main.h"
@@ -93,8 +95,10 @@ void opcontrol() {
 		// --- Motor setup ---
 			// Edit the ports using the global variables, please
 			pros::Motor left_mtr1(LEFT_MOTOR_1_PORT); 	// Left side motor
+			pros::Motor left_mtr2(LEFT_MOTOR_2_PORT); 	// Left side motor
 			pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT); 	// Right side motor
-			pros::Motor wheel_mtr(BAND_WHEEL_PORT);		// Rubber band wheel motor
+			pros::Motor right_mtr2(RIGHT_MOTOR_2_PORT); 	// Right side motor
+			pros::Motor stringdrop_mtr(STRINGDROP_PORT);	// Rubber band wheel motor
 			pros::Motor Flywheel1(FLYWHEEL_PORT_1);		// Flywheel motor 1
 			pros::Motor Flywheel2(FLYWHEEL_PORT_2);		// Flywheel motor 2
 			pros::Motor BeltMotor(BELT_MOTOR_PORT);		// Belt intake motor
@@ -125,63 +129,36 @@ void opcontrol() {
 
 		}
 
-		if (buttonA) { // Autonomous test
-			// --- Motor setup ---
-				// Edit the ports using the global variables, please
-				pros::Motor left_mtr1(LEFT_MOTOR_1_PORT); 	// Left side motor
-				pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT); 	// Right side motor
-				pros::Motor wheel_mtr(BAND_WHEEL_PORT);		// Rubber band wheel motor
-				pros::Motor Flywheel1(FLYWHEEL_PORT_1);		// Flywheel motor 1
-				pros::Motor Flywheel2(FLYWHEEL_PORT_2);		// Flywheel motor 2
-				pros::Motor BeltMotor(BELT_MOTOR_PORT);		// Belt intake motor
-
-			// Turn 45 degrees
-			left_mtr1 = 100; right_mtr1 = 0;
-			pros::delay(500);
-			// Go full speed ahead for 2 seconds
-			left_mtr1 = 255; right_mtr1 = -255;
-			pros::delay(2000);			
-			// Turn 45 degrees
-			left_mtr1 = 100; right_mtr1 = 0;
-			pros::delay(500);
-			/** // Go full speed ahead for 2 seconds
-			left_mtr1 = 255; right_mtr1 = -255;
-			pros::delay(2000);
-			// Push disks in
-			left_mtr1 = 255; right_mtr1 = -100;
-			pros::delay(2000); */
-		
-
-		}
-
 		
 		// Output to motors
 			left_mtr1 = left_stickY; 					// Left and right side motors move by the sticks of their respective sides (tank controls)
+			left_mtr2 = left_stickY;
 			right_mtr1 = - right_stickY;				// This motor is reversed
-			wheel_mtr = buttonA;						// The band wheel moves on button A
-
-			if (bumperR1) {
-				Flywheel1 = -255;
-				Flywheel2 = 255;
-			}
-			else{
-				Flywheel1 = 0;
-				Flywheel2 = 0;
-			}
+			right_mtr2 = - right_stickY;
 
 			if (bumperL1) {
-				pros::lcd::set_text(3, "L1");
-				BeltMotor = - ROLLER_SPEED;
+				stringdrop_mtr = 255 * STRINGDROP_MULTIPLIER;
 			}
 			else if (bumperL2) {
-				pros::lcd::set_text(3, "L2");
-				BeltMotor = ROLLER_SPEED;
+				stringdrop_mtr = -255 * STRINGDROP_MULTIPLIER;
+
 			}
 			else {
-				pros::lcd::set_text(3, "OFF");
-				BeltMotor = 0;
+				stringdrop_mtr = 0;
 			}
 
+
+
+			if (bumperR1) {
+				BeltMotor = 255;
+			}
+			else if (bumperR2) {
+				BeltMotor = -255;
+
+			}
+			else {
+				BeltMotor = 0;
+			}
 
 		pros::delay(20); // This is required for the screen to function
 	}
