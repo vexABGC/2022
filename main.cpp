@@ -14,6 +14,7 @@
 	// Other
 		int PNEUMATICS_DELAY = 200;
 		float STRINGDROP_MULTIPLIER = 0.2;
+		float FLYWHEEL_MULTIPLIER = 1.0;
 
 // PROS libraries
 	#include "main.h"
@@ -136,29 +137,34 @@ void opcontrol() {
 			right_mtr1 = - right_stickY;				// This motor is reversed
 			right_mtr2 = - right_stickY;
 
-			if (bumperL1) {
-				stringdrop_mtr = 255 * STRINGDROP_MULTIPLIER;
+			if (bumperR1) {
+				Flywheel1 = 255 * FLYWHEEL_MULTIPLIER;
+				Flywheel2 = -255 * FLYWHEEL_MULTIPLIER;
 			}
-			else if (bumperL2) {
-				stringdrop_mtr = -255 * STRINGDROP_MULTIPLIER;
+			else if (bumperR2) {
+				Flywheel1 = -30 * FLYWHEEL_MULTIPLIER;
+				Flywheel2 = 30 * FLYWHEEL_MULTIPLIER;
 
 			}
 			else {
-				stringdrop_mtr = 0;
+				Flywheel1 = 0;
+				Flywheel2 = 0;
 			}
 
 
 
-			if (bumperR1) {
+			if (bumperL1) {
 				BeltMotor = 255;
 			}
-			else if (bumperR2) {
+			else if (bumperL2) {
 				BeltMotor = -255;
 
 			}
 			else {
 				BeltMotor = 0;
 			}
+
+			
 
 		pros::delay(20); // This is required for the screen to function
 	}
