@@ -8,8 +8,8 @@
 		int STRINGDROP_PORT = 7;		// Rubber band wheel port
 		int FLYWHEEL_PORT_1 = 1;		// Flywheel 1 port
 		int FLYWHEEL_PORT_2 = 10;		// Flywheel 2 port
-		int BELT_MOTOR_PORT = 5;		// Motor for the belt intake
-		#define PNEUMATICS_A 'A' 		// PNEUMATICS port A
+		int BELT_MOTOR_PORT = 14;		// Motor for the belt intake
+		#define PNEUMATICS_A 'H' 		// PNEUMATICS port A
 		#define PNEUMATICS_B 'B' 		// PNEUMATICS port A
 	// Other
 		int PNEUMATICS_DELAY = 200;
@@ -124,10 +124,6 @@ void opcontrol() {
 		if (buttonX) { // PNEUMATICS function
 			pneumaticsA.set_value(true); 					// Expand piston
 			pneumaticsB.set_value(true); 					// Expand piston
-			pros::delay(PNEUMATICS_DELAY); 	// Delay to allow the piston to expand
-			pneumaticsA.set_value(false);					// Retract piston
-			pneumaticsB.set_value(false);					// Retract piston
-
 		}
 
 		
@@ -138,12 +134,12 @@ void opcontrol() {
 			right_mtr2 = - right_stickY;
 
 			if (bumperR1) {
-				Flywheel1 = 255 * FLYWHEEL_MULTIPLIER;
-				Flywheel2 = -255 * FLYWHEEL_MULTIPLIER;
+				Flywheel1 = -255 * FLYWHEEL_MULTIPLIER;
+				Flywheel2 = 255 * FLYWHEEL_MULTIPLIER;
 			}
 			else if (bumperR2) {
-				Flywheel1 = -30 * FLYWHEEL_MULTIPLIER;
-				Flywheel2 = 30 * FLYWHEEL_MULTIPLIER;
+				Flywheel1 = 30 * FLYWHEEL_MULTIPLIER;
+				Flywheel2 = -30 * FLYWHEEL_MULTIPLIER;
 
 			}
 			else {
