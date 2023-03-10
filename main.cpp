@@ -1,13 +1,14 @@
 // --- Global variables ---
 	// Ports
+		#include "pros/rtos.hpp"
 		#include <string>
 		int LEFT_MOTOR_1_PORT = 11; 		// Left motor 1 port
 		int LEFT_MOTOR_2_PORT = 12; 		// Left motor 2 port
 		int RIGHT_MOTOR_1_PORT = 19; 	// Right motor 1 port
 		int RIGHT_MOTOR_2_PORT = 20; 	// Right motor 1 port
-		int STRINGDROP_PORT = 7;		// Rubber band wheel port
+		int ROLLER_PORT = 13;			// Rubber band wheel port
 		int FLYWHEEL_PORT_1 = 1;		// Flywheel 1 port
-		int FLYWHEEL_PORT_2 = 10;		// Flywheel 2 port
+		int FLYWHEEL_PORT_2 = 9;		// Flywheel 2 port
 		int BELT_MOTOR_PORT = 14;		// Motor for the belt intake
 		#define PNEUMATICS_A 'H' 		// PNEUMATICS port A
 		#define PNEUMATICS_B 'B' 		// PNEUMATICS port A
@@ -15,6 +16,8 @@
 		int PNEUMATICS_DELAY = 200;
 		float STRINGDROP_MULTIPLIER = 0.2;
 		float FLYWHEEL_MULTIPLIER = 1.0;
+		int ReverseMode = 1;
+		
 
 // PROS libraries
 	#include "main.h"
@@ -88,6 +91,7 @@ void opcontrol() {
 
 	// --- Controller, pneumatics and motor setup ---
 		pros::Controller master(pros::E_CONTROLLER_MASTER); // Controller setup
+		master.set_text(0, 0, "Standard");
 
 		pros::ADIDigitalOut pneumaticsA (PNEUMATICS_A);	// PNEUMATICS setup
 		pros::ADIDigitalOut pneumaticsB (PNEUMATICS_B);	// PNEUMATICS setup
@@ -99,7 +103,7 @@ void opcontrol() {
 			pros::Motor left_mtr2(LEFT_MOTOR_2_PORT); 	// Left side motor
 			pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT); 	// Right side motor
 			pros::Motor right_mtr2(RIGHT_MOTOR_2_PORT); 	// Right side motor
-			pros::Motor stringdrop_mtr(STRINGDROP_PORT);	// Rubber band wheel motor
+			pros::Motor RollerMotor(ROLLER_PORT);	// Rubber band wheel motor
 			pros::Motor Flywheel1(FLYWHEEL_PORT_1);		// Flywheel motor 1
 			pros::Motor Flywheel2(FLYWHEEL_PORT_2);		// Flywheel motor 2
 			pros::Motor BeltMotor(BELT_MOTOR_PORT);		// Belt intake motor
@@ -110,13 +114,16 @@ void opcontrol() {
 
 		// Read controller
 			int left_stickY = master.get_analog(ANALOG_LEFT_Y);
-			int right_stickY = master.get_analog(ANALOG_RIGHT_Y);
-			bool buttonA = master.get_digital(DIGITAL_A);
+			int right_stickX = master.get_analog(ANALOG_RIGHT_X);
 			bool buttonX = master.get_digital(DIGITAL_X);
+			bool buttonY = master.get_digital_new_press(DIGITAL_Y);
 			bool bumperL1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
 			bool bumperL2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
 			bool bumperR1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
 			bool bumperR2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+			bool buttonUp = master.get_digital(pros::E_CONTROLLER_DIGITAL_UP);
+			bool buttonDown = master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
+
 
 
 
@@ -124,14 +131,26 @@ void opcontrol() {
 		if (buttonX) { // PNEUMATICS function
 			pneumaticsA.set_value(true); 					// Expand piston
 			pneumaticsB.set_value(true); 					// Expand piston
+			pros::delay(500);
+			pneumaticsA.set_value(false); 					// Retract piston
+			pneumaticsB.set_value(false); 					// Retract piston
 		}
 
-		
+		if (buttonY and ReverseMode == 1) {
+			ReverseMode = -1;
+			master.set_text(0, 0, "Reversed");
+		}
+		else if (buttonY and ReverseMode == -1) {
+			ReverseMode = 1;
+			master.set_text(0, 0, "Standard");
+		}
+
+
 		// Output to motors
-			left_mtr1 = left_stickY; 					// Left and right side motors move by the sticks of their respective sides (tank controls)
-			left_mtr2 = left_stickY;
-			right_mtr1 = - right_stickY;				// This motor is reversed
-			right_mtr2 = - right_stickY;
+			left_mtr1 = left_stickY - 2* right_stickX *ReverseMode; 					// Left and right side motors move by the sticks of their respective sides (tank controls)
+			left_mtr2 = left_stickY - 2*right_stickX *ReverseMode;
+			right_mtr1 = - left_stickY - 2*right_stickX *ReverseMode;					// This motor is reversed
+			right_mtr2 = - left_stickY - 2*right_stickX *ReverseMode;
 
 			if (bumperR1) {
 				Flywheel1 = -255 * FLYWHEEL_MULTIPLIER;
@@ -160,6 +179,15 @@ void opcontrol() {
 				BeltMotor = 0;
 			}
 
+			if (buttonUp) {
+				RollerMotor = 100;
+			}
+			else if (buttonDown) {
+				RollerMotor = -100;
+			}
+			else {
+				RollerMotor = 0;
+			}
 			
 
 		pros::delay(20); // This is required for the screen to function
