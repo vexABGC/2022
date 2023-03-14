@@ -35,7 +35,7 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "A moment of silence");
 	pros::lcd::set_text(2, "for the deceased...");
-}
+	}
 
 void disabled() {
 	/**
@@ -70,6 +70,45 @@ void autonomous() {
 		* will be stopped. Re-enabling the robot will restart the task, not re-start it
 		* from where it left off.
 		*/	
+	// --- Motor setup ---
+			// Edit the ports using the global variables, please
+			pros::Motor left_mtr1(LEFT_MOTOR_1_PORT); 	// Left side motor
+			pros::Motor left_mtr2(LEFT_MOTOR_2_PORT); 	// Left side motor
+			pros::Motor right_mtr1(RIGHT_MOTOR_1_PORT); 	// Right side motor
+			pros::Motor right_mtr2(RIGHT_MOTOR_2_PORT); 	// Right side motor
+			pros::Motor RollerMotor(ROLLER_PORT);	// Rubber band wheel motor
+			pros::Motor Flywheel1(FLYWHEEL_PORT_1);		// Flywheel motor 1
+			pros::Motor Flywheel2(FLYWHEEL_PORT_2);		// Flywheel motor 2
+			pros::Motor BeltMotor(BELT_MOTOR_PORT);		// Belt intake motor
+
+	left_mtr1 = 100;
+	left_mtr2 = 100;
+	right_mtr1 = -255;
+	right_mtr2 = -255;
+	pros::delay(500);
+	left_mtr1 = 0;
+	left_mtr2 = 0;
+	right_mtr1 = 255;
+	right_mtr2 = 255;
+	pros::delay(200);
+	left_mtr1 = -255;
+	left_mtr2 = -255;
+	right_mtr1 = 255;
+	right_mtr2 = 255;
+	pros::delay(700);
+	left_mtr1 = -100;
+	left_mtr2 = -100;
+	right_mtr1 = 100;
+	right_mtr2 = 100;
+	RollerMotor = 100;
+	pros::delay(500);
+	left_mtr1 = 0;
+	left_mtr2 = 0;
+	right_mtr1 = 0;
+	right_mtr2 = 0;
+	RollerMotor = 0;
+
+
 
 
 }
@@ -114,8 +153,9 @@ void opcontrol() {
 
 		// Read controller
 			int left_stickY = master.get_analog(ANALOG_LEFT_Y);
-			int right_stickX = master.get_analog(ANALOG_RIGHT_X);
+			int right_stickY = master.get_analog(ANALOG_RIGHT_Y);
 			bool buttonX = master.get_digital(DIGITAL_X);
+			bool buttonB = master.get_digital(DIGITAL_B);
 			bool buttonY = master.get_digital_new_press(DIGITAL_Y);
 			bool bumperL1 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
 			bool bumperL2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
@@ -125,6 +165,9 @@ void opcontrol() {
 			bool buttonDown = master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
 
 
+		if (buttonB) {
+			autonomous();
+		}
 
 
 
@@ -147,14 +190,14 @@ void opcontrol() {
 
 
 		// Output to motors
-			left_mtr1 = left_stickY - 2* right_stickX *ReverseMode; 					// Left and right side motors move by the sticks of their respective sides (tank controls)
-			left_mtr2 = left_stickY - 2*right_stickX *ReverseMode;
-			right_mtr1 = - left_stickY - 2*right_stickX *ReverseMode;					// This motor is reversed
-			right_mtr2 = - left_stickY - 2*right_stickX *ReverseMode;
+			left_mtr1 = left_stickY * ReverseMode; 					// Left and right side motors move by the sticks of their respective sides (tank controls)
+			left_mtr2 = left_stickY * ReverseMode;
+			right_mtr1 = - right_stickY * ReverseMode;				// This motor is reversed
+			right_mtr2 = - right_stickY * ReverseMode;
 
 			if (bumperR1) {
-				Flywheel1 = -255 * FLYWHEEL_MULTIPLIER;
-				Flywheel2 = 255 * FLYWHEEL_MULTIPLIER;
+				Flywheel1 = -205 * FLYWHEEL_MULTIPLIER;
+				Flywheel2 = 205 * FLYWHEEL_MULTIPLIER;
 			}
 			else if (bumperR2) {
 				Flywheel1 = 30 * FLYWHEEL_MULTIPLIER;
